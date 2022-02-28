@@ -1,0 +1,5 @@
+name: quarkus-smallrye-openapi-extras
+title: Quarkus - Smallrye OpenAPI Extras
+version: dev
+nav:
+  - modules/ROOT/nav.adoc
