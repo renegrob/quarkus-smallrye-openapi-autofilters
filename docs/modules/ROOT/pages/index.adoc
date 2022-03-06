@@ -1,5 +1,5 @@
 = Quarkus - Smallrye OpenAPI Extras
-:extension-status: preview
+:extension-status: experimental
 
 Describe what the extension does here.
 

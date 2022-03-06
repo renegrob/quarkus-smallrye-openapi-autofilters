@@ -22,7 +22,7 @@ import javax.ws.rs.Path;
 
 @Path("/smallrye-openapi-extras")
 @ApplicationScoped
-public class SmallryeOpenAPIExtrasResource {
+public class SmallryeOpenApiExtrasResource {
     // add some rest methods here
 
     @GET
