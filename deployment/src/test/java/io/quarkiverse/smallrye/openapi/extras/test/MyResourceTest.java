@@ -6,6 +6,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.smallrye.openapi.extras.runtime.annotations.OAEFilter;
 import io.quarkiverse.smallrye.openapi.extras.runtime.filters.OAEBaseFilter;
+import io.quarkiverse.smallrye.openapi.extras.test.annotations.MyDefaultSummary;
+import io.quarkiverse.smallrye.openapi.extras.test.annotations.MyPermission;
 import io.quarkus.test.QuarkusUnitTest;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.LogDetail;

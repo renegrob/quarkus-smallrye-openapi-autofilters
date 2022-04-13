@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.openapi.models.Operation;
+import org.eclipse.microprofile.openapi.models.parameters.Parameter;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.ClassInfo;
@@ -15,6 +16,7 @@ import org.jboss.jandex.DotName;
 import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.MethodParameterInfo;
 import org.jboss.jandex.Type;
+import org.jsoup.Connection;
 
 import io.quarkiverse.smallrye.openapi.extras.runtime.annotations.OAEFilter;
 import io.quarkiverse.smallrye.openapi.extras.runtime.filters.OAEBaseFilter;
@@ -31,6 +33,10 @@ public class OAEFilterBuildStep {
     private static final DotName OAEFilterDotName = DotName.createSimple(OAEFilter.class.getName());
     private static final DotName OAEBaseFilterDotName = DotName.createSimple(OAEBaseFilter.class.getName());
     private static final DotName OperationDotName = DotName.createSimple(Operation.class.getName());
+
+    private static final DotName RequestBodyDotName = DotName.createSimple(Connection.Request.class.getName());
+
+    private static final DotName ParameterDotName = DotName.createSimple(Parameter.class.getName());
 
     @BuildStep
     void addOpenApiModConfigFilter(BuildProducer<AddToOpenAPIDefinitionBuildItem> addToOpenAPIDefinitionProducer,
@@ -65,7 +71,14 @@ public class OAEFilterBuildStep {
                 if (OperationDotName.equals(filterType.name())) {
                     OAEBaseFilter<Operation> operationFilter = (OAEBaseFilter<Operation>) createSingleton(cl, filterClassInfo,
                             classNameToSingleton);
-                    configureAnnotationFilter(operationAnnotationInfo, filterAnnotations, operationFilter);
+                    configureOperationAnnotationFilter(operationAnnotationInfo, filterAnnotations, operationFilter);
+                }
+                // TODO: RequestBody
+                if (ParameterDotName.equals(filterType.name())) {
+                    OAEBaseFilter<Parameter> parameterFilter = (OAEBaseFilter<Parameter>) createSingleton(cl, filterClassInfo,
+                            classNameToSingleton);
+                    configureParameterAnnotationFilter(operationAnnotationInfo, filterAnnotations, parameterFilter);
+
                 }
             }
         }
@@ -92,7 +105,7 @@ public class OAEFilterBuildStep {
         return instance;
     }
 
-    private void configureAnnotationFilter(OperationAnnotationInfo operationAnnotationInfo,
+    private void configureOperationAnnotationFilter(OperationAnnotationInfo operationAnnotationInfo,
             Collection<AnnotationInstance> annotationInstances, OAEBaseFilter<Operation> filterInstance) {
 
         for (AnnotationInstance ai : annotationInstances) {
@@ -115,36 +128,19 @@ public class OAEFilterBuildStep {
         }
     }
 
-    private OperationAnnotationInfo getMyAnnotationParameterReferences(
-            Collection<AnnotationInstance> annotationInstances, FilteredIndexView index) {
-
-        OperationAnnotationInfo operationAnnotationInfo = new OperationAnnotationInfo();
-        for (AnnotationInstance ai : annotationInstances) {
-            if (ai.target().kind().equals(AnnotationTarget.Kind.METHOD)) {
-                MethodInfo method = ai.target().asMethod();
-                //String ref = JandexUtil.createUniqueMethodReference(method.declaringClass(), method);
-                //System.out.println(String.format("method annotationInstance: %s -> %s", ref, ai));
-                operationAnnotationInfo.createForMethod(method).addAnnotation(ai);
-            }
-            if (ai.target().kind().equals(AnnotationTarget.Kind.CLASS)) {
-                ClassInfo classInfo = ai.target().asClass();
-                List<MethodInfo> methods = classInfo.methods();
-                for (MethodInfo method : methods) {
-                    // String ref = JandexUtil.createUniqueMethodReference(classInfo, method);
-                    //System.out.println(String.format("class annotationInstance: %s -> %s", ref, ai));
-                    operationAnnotationInfo.createForMethod(method).addAnnotation(ai);
-                }
-            }
-        }
+    private void configureParameterAnnotationFilter(OperationAnnotationInfo operationAnnotationInfo,
+            Collection<AnnotationInstance> annotationInstances, OAEBaseFilter<Parameter> filterInstance) {
 
         for (AnnotationInstance ai : annotationInstances) {
             if (ai.target().kind().equals(AnnotationTarget.Kind.METHOD_PARAMETER)) {
                 MethodParameterInfo parameter = ai.target().asMethodParameter();
-                operationAnnotationInfo.createForMethod(parameter.method()).createForParameter(parameter).addAnnotation(ai);
+                operationAnnotationInfo
+                        .createForMethod(parameter.method())
+                        .createForParameter(parameter)
+                        .addAnnotation(ai)
+                        .addFilter(filterInstance);
             }
         }
-        return operationAnnotationInfo;
-
     }
     /*
      * private void implementCrudRepositories(BuildProducer<GeneratedBeanBuildItem> generatedBeans,

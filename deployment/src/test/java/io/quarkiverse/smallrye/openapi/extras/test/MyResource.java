@@ -6,6 +6,9 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
+import io.quarkiverse.smallrye.openapi.extras.test.annotations.MyDefaultSummary;
+import io.quarkiverse.smallrye.openapi.extras.test.annotations.MyPermission;
+
 @Path("my-resource")
 @MyPermission("basic-permission")
 public class MyResource {
