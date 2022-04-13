@@ -14,13 +14,13 @@ public class MyResource {
 
     @GET
     @MyDefaultSummary
-    List<String> list() {
+    public List<String> list() {
         return list;
     }
 
     @MyPermission({ "deletion", "admin" })
     @DELETE
-    void delete() {
+    public void delete() {
         list = List.of();
     }
 }

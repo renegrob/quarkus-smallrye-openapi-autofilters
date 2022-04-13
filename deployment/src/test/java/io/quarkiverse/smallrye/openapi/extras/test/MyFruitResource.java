@@ -28,11 +28,12 @@ public class MyFruitResource {
         list.clear();
     }
 
-    @MyPermission({ "modification" })
-    @PUT
-    void addFruit(@MyAdjustParameterExample("{ \"name\":\"Lemon\" }") Fruit fruit) {
-        list.add(fruit);
-    }
+    // TODO: Kaboom!
+    //    @MyPermission({ "modification" })
+    //    @PUT
+    //    void addFruit(@MyAdjustParameterExample("{ \"name\":\"Lemon\" }") Fruit fruit) {
+    //        list.add(fruit);
+    //    }
 
     @MyPermission({ "modification" })
     @PUT
