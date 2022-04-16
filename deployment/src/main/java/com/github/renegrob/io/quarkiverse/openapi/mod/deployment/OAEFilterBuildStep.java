@@ -14,6 +14,7 @@ import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.MethodInfo;
+import org.jboss.jandex.MethodParameterInfo;
 import org.jboss.jandex.Type;
 import org.jsoup.Connection;
 
@@ -67,13 +68,14 @@ public class OAEFilterBuildStep {
             final Collection<OAEFilter<?>> oaeFilters = entry.getValue();
             for (AnnotationInstance ai : annotationInstances) {
 
-                if (ai.target().kind().equals(AnnotationTarget.Kind.METHOD)) {
+                final AnnotationTarget.Kind annotationTargetKind = ai.target().kind();
+                if (annotationTargetKind.equals(AnnotationTarget.Kind.METHOD)) {
                     MethodInfo method = ai.target().asMethod();
                     for (OAEFilter<?> oaeFilter : oaeFilters) {
                         filters.createForMethod(method).addFilter(oaeFilter).addAnnotationInstance(ai);
                     }
                 }
-                if (ai.target().kind().equals(AnnotationTarget.Kind.CLASS)) {
+                if (annotationTargetKind.equals(AnnotationTarget.Kind.CLASS)) {
                     ClassInfo classInfo = ai.target().asClass();
                     List<MethodInfo> methods = classInfo.methods();
                     for (MethodInfo method : methods) {
@@ -83,13 +85,15 @@ public class OAEFilterBuildStep {
                     }
                 }
 
-                //                if (ai.target().kind().equals(AnnotationTarget.Kind.METHOD_PARAMETER)) {
-                //                    MethodParameterInfo parameter = ai.target().asMethodParameter();
-                //                    filters.createForMethod(parameter.method())
-                //                            .createForParameter(parameter)
-                //                            .addAnnotation(ai)
-                //                            .addFilters(oaeFilters);
-                //                }
+                if (ai.target().kind().equals(AnnotationTarget.Kind.METHOD_PARAMETER)) {
+                    MethodParameterInfo parameter = ai.target().asMethodParameter();
+                    for (OAEFilter<?> oaeFilter : oaeFilters) {
+                        filters.createForMethod(parameter.method())
+                                .createForParameter(parameter)
+                                .addFilter(oaeFilter)
+                                .addAnnotationInstance(ai);
+                    }
+                }
             }
         }
 

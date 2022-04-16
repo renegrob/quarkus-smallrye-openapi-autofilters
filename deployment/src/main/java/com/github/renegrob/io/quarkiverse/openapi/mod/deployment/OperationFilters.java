@@ -1,32 +1,27 @@
 package com.github.renegrob.io.quarkiverse.openapi.mod.deployment;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.MethodParameterInfo;
 
-import io.quarkiverse.smallrye.openapi.extras.runtime.filters.OAEFilter;
+import io.smallrye.openapi.runtime.util.JandexUtil;
 
-public class OperationFilters {
+public class OperationFilters extends AbstractFiltersHolder {
+    private final Map<String, ParameterFilters> refToParameterFilters = new HashMap<>();
+    private final MethodInfo methodInfo;
 
-    private Map<Class<?>, List<FilterWrapper<?>>> typeToFilters = new HashMap<>();
-    private Map<OAEFilter<?>, FilterWrapper<?>> filterMap = new LinkedHashMap<>();
+    public OperationFilters(MethodInfo methodInfo) {
+        this.methodInfo = methodInfo;
+    }
 
     public ParameterFilters createForParameter(MethodParameterInfo parameter) {
-        return null;
+        final String parameterRef = JandexUtil.createUniqueMethodParameterRef(parameter);
+        return refToParameterFilters.computeIfAbsent(parameterRef, k -> new ParameterFilters(parameter));
     }
 
-    public FilterWrapper<?> addFilter(OAEFilter<?> oaeFilter) {
-        final FilterWrapper<?> filterWrapper = filterMap.computeIfAbsent(oaeFilter, k -> new FilterWrapper<>(oaeFilter));
-        typeToFilters.computeIfAbsent(oaeFilter.itemType(), k -> new ArrayList<>()).add(filterWrapper);
-        return filterWrapper;
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T> List<FilterWrapper<T>> getFiltersByItemType(Class<T> itemType) {
-        return (List<FilterWrapper<T>>) (List) typeToFilters.get(itemType);
+    public MethodInfo methodInfo() {
+        return methodInfo;
     }
 }

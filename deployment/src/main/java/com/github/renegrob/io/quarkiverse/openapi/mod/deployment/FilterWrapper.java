@@ -2,6 +2,7 @@ package com.github.renegrob.io.quarkiverse.openapi.mod.deployment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.jandex.AnnotationInstance;
 
@@ -18,5 +19,15 @@ public class FilterWrapper<T> {
 
     public void addAnnotationInstance(AnnotationInstance ai) {
         annotationInstances.add(ai);
+    }
+
+    T filter(T item, Map<String, Object> context) {
+        for (AnnotationInstance ai : annotationInstances) {
+            if (item == null) {
+                break;
+            }
+            item = oaeFilter.filter(item, ai, context);
+        }
+        return item;
     }
 }

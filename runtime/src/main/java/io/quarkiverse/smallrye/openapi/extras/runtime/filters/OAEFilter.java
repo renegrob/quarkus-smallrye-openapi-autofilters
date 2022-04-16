@@ -11,8 +11,8 @@ public interface OAEFilter<T> {
     Class<T> itemType();
 
     class ContextKey {
-        public final String PATH = "PATH";
-        public final String METHOD = "METHOD";
+        public static final String PATH = "PATH";
+        public static final String METHOD = "METHOD";
 
         private ContextKey() {
         }

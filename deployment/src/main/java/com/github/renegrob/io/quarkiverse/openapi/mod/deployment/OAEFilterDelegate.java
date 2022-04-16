@@ -1,6 +1,8 @@
 package com.github.renegrob.io.quarkiverse.openapi.mod.deployment;
 
-import java.util.List;
+import static io.quarkiverse.smallrye.openapi.extras.runtime.filters.OAEFilter.ContextKey.METHOD;
+
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.microprofile.openapi.OASFilter;
@@ -44,27 +46,10 @@ public class OAEFilterDelegate implements OASFilter {
         if (operationFilters == null) {
             return operation;
         }
-        final List<FilterWrapper<Operation>> filtersByItemType = operationFilters.getFiltersByItemType(Operation.class);
+        Map<String, Object> context = Map.of(METHOD, operationFilters.methodInfo().name());
+        operation = operationFilters.filter(Operation.class, operation, context);
+        operation.setRequestBody(operationFilters.filter(RequestBody.class, operation.getRequestBody(), context));
 
-        /*
-         * 
-         * final OperationAnnotationInfo.MethodAnnotationHolder methodAnnotationHolder = operationAnnotationInfo
-         * .getByMethodRef(OperationImpl.getMethodRef(operation));
-         * if (methodAnnotationHolder == null) {
-         * return operation;
-         * }
-         * for (AnnotationFilters<Operation> annotationFilters : methodAnnotationHolder.configurations()) {
-         * for (OAEFilter<Operation> operationFilter : annotationFilters.filters()) {
-         * operation = operationFilter.filter(operation, Map.of());
-         * }
-         * }
-         * // operation.getRequestBody()
-         * final List<Parameter> parameters = operation.getParameters();
-         * if (parameters != null) {
-         * filterParameters(parameters, methodAnnotationHolder);
-         * }
-         * 
-         */
         return operation;
     }
 
