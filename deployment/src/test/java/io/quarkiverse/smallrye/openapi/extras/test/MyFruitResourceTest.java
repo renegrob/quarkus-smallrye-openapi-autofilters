@@ -14,6 +14,7 @@ import io.quarkiverse.smallrye.openapi.extras.test.annotations.MyRequestBodyFilt
 import io.quarkus.test.QuarkusUnitTest;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.LogDetail;
+import io.smallrye.openapi.runtime.io.JsonUtil;
 
 public class MyFruitResourceTest {
 
@@ -35,6 +36,11 @@ public class MyFruitResourceTest {
         RestAssured.given().header("Accept", "application/json")
                 .when().get("/q/openapi")
                 .then().log().ifValidationFails(LogDetail.BODY)
-                .body("paths.'/my-fruit-resource'.post.requestBody.content.'application/json'", Matchers.equalTo("list"));
+                .body("paths.'/my-fruit-resource'.post.requestBody.content.'application/json'",
+                        Matchers.equalTo(JsonUtil.parseValue(
+                                "{schema={$ref=#/components/schemas/Fruit}, example={name=Lemon, description=Yellow fruit}}")));
+        // TODO:
+        //        Expected: {schema={$ref=#/components/schemas/Fruit}, example={name=Lemon, description=Yellow fruit}}
+        //        Actual: <{schema={$ref=#/components/schemas/Fruit}, example={name=Lemon, description=Yellow fruit}}>
     }
 }

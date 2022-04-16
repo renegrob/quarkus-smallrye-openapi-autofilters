@@ -24,4 +24,8 @@ public class OperationFilters extends AbstractFiltersHolder {
     public MethodInfo methodInfo() {
         return methodInfo;
     }
+
+    public ParameterFilters getByParameterRef(String paramRef) {
+        return refToParameterFilters.get(paramRef);
+    }
 }

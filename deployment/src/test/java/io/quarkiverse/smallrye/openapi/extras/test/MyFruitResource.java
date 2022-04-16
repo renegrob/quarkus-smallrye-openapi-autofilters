@@ -34,7 +34,8 @@ public class MyFruitResource {
 
     @MyPermission({ "modification" })
     @POST
-    public void addFruit(@MyAdjustRequestBodyExample("{ \"name\":\"Lemon\" }") Fruit fruit) {
+    public void addFruit(
+            @MyAdjustRequestBodyExample("{ \"name\":\"Lemon\" }") Fruit fruit) {
         list.add(fruit);
     }
 

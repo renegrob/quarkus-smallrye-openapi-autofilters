@@ -19,4 +19,8 @@ public class OAEFilters {
         String methodRef = JandexUtil.createUniqueMethodReference(method.declaringClass(), method);
         return filtersMap.computeIfAbsent(methodRef, k -> new OperationFilters(method));
     }
+
+    public boolean isEmpty() {
+        return filtersMap.isEmpty();
+    }
 }

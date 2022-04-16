@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.eclipse.microprofile.openapi.models.Operation;
 import org.eclipse.microprofile.openapi.models.parameters.Parameter;
+import org.eclipse.microprofile.openapi.models.parameters.RequestBody;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.ClassInfo;
@@ -88,10 +89,14 @@ public class OAEFilterBuildStep {
                 if (ai.target().kind().equals(AnnotationTarget.Kind.METHOD_PARAMETER)) {
                     MethodParameterInfo parameter = ai.target().asMethodParameter();
                     for (OAEFilter<?> oaeFilter : oaeFilters) {
-                        filters.createForMethod(parameter.method())
-                                .createForParameter(parameter)
-                                .addFilter(oaeFilter)
-                                .addAnnotationInstance(ai);
+                        if (RequestBody.class.equals(oaeFilter.itemType())) {
+                            filters.createForMethod(parameter.method()).addFilter(oaeFilter).addAnnotationInstance(ai);
+                        } else {
+                            filters.createForMethod(parameter.method())
+                                    .createForParameter(parameter)
+                                    .addFilter(oaeFilter)
+                                    .addAnnotationInstance(ai);
+                        }
                     }
                 }
             }
