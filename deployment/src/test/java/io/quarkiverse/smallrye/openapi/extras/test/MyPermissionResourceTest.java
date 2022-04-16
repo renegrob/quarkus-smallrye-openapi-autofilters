@@ -4,8 +4,8 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import io.quarkiverse.smallrye.openapi.extras.runtime.annotations.OAEFilter;
-import io.quarkiverse.smallrye.openapi.extras.runtime.filters.OAEBaseFilter;
+import io.quarkiverse.smallrye.openapi.extras.runtime.annotations.OAEFilterSelector;
+import io.quarkiverse.smallrye.openapi.extras.runtime.filters.OAEFilter;
 import io.quarkiverse.smallrye.openapi.extras.test.annotations.MyPermission;
 import io.quarkus.test.QuarkusUnitTest;
 import io.restassured.RestAssured;
@@ -19,8 +19,8 @@ public class MyPermissionResourceTest {
             .withApplicationRoot(root -> root
                     .addClass(MyPermissionResource.class)
                     .addClass(MyPermission.class)
-                    .addClass(OAEFilter.class)
-                    .addClass(OAEBaseFilter.class));
+                    .addClass(OAEFilterSelector.class)
+                    .addClass(OAEFilter.class));
 
     @Test
     public void testMyDefaultSummary() {

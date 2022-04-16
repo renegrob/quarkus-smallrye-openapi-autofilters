@@ -1,9 +1,14 @@
 package io.quarkiverse.smallrye.openapi.extras.runtime.filters;
 
-import org.jboss.jandex.AnnotationInstance;
+public abstract class OAEBaseFilter<T> implements OAEFilter<T> {
 
-@FunctionalInterface
-public interface OAEBaseFilter<T> {
+    private final Class<T> itemType;
 
-    T filter(T item, AnnotationInstance annotationInstance);
+    public OAEBaseFilter(Class<T> itemType) {
+        this.itemType = itemType;
+    }
+
+    public Class<T> itemType() {
+        return itemType;
+    }
 }
