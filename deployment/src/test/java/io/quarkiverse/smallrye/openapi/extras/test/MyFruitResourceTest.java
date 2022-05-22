@@ -38,9 +38,6 @@ public class MyFruitResourceTest {
                 .then().log().ifValidationFails(LogDetail.BODY)
                 .body("paths.'/my-fruit-resource'.post.requestBody.content.'application/json'",
                         Matchers.equalTo(JsonUtil.parseValue(
-                                "{schema={$ref=#/components/schemas/Fruit}, example={name=Lemon, description=Yellow fruit}}")));
-        // TODO:
-        //        Expected: {schema={$ref=#/components/schemas/Fruit}, example={name=Lemon, description=Yellow fruit}}
-        //        Actual: <{schema={$ref=#/components/schemas/Fruit}, example={name=Lemon, description=Yellow fruit}}>
+                                "{\"schema\": {\"$ref\": \"#/components/schemas/Fruit\"}, \"example\": {\"name\": \"Lemon\", \"description\": \"Yellow fruit\"}}")));
     }
 }
